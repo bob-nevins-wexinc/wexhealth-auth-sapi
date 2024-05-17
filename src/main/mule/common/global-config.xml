@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:error-handler-plugin="http://www.mulesoft.org/schema/mule/error-handler-plugin" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/error-handler-plugin http://www.mulesoft.org/schema/mule/error-handler-plugin/current/mule-error-handler-plugin.xsd http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+    <!-- Comment out when using for a domain project -->
+    <api-gateway:autodiscovery apiId="${api.autodiscovery.id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="6d11ac34-bbba-4024-a38e-36e9ed0c0bda" flowRef="wexhealth-auth-sapi-main" />
+	<global-property doc:name="Global Property" doc:id="9673c65b-08c6-4851-8bb7-df5cf41d5943" name="api.autodiscovery.id" value="${secure::api.autodiscovery.id}" />
+	<global-property doc:name="Global Property" doc:id="bbcd6c76-1dbe-495e-9da3-486a92570e29" name="mule.env" value="${mule.env}" />
+	<global-property doc:name="Global Property" doc:id="2aa01b2b-0ddf-45bf-ad51-3eeabe0027d2" name="mule.key" value="${mule.key}" />
+	<configuration-properties doc:name="Configuration properties" doc:id="daef78e6-2532-4eeb-a16b-42218358c07d" file="properties/config-${mule.env}.yaml" />
+    <http:listener-config name="wexhealth-auth-sapi-httpListenerConfig">
+        <http:listener-connection host="${https.listener.host}" port="${https.port}" protocol="HTTPS">
+			<tls:context >
+				<tls:key-store type="pkcs12" path="${secure::https.listener.keystore.file}" alias="${secure::https.listener.keystore.alias}" keyPassword="${secure::https.listener.keystore.password}" password="${secure::https.listener.keystore.key.password}" />
+			</tls:context>
+		</http:listener-connection>
+    </http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="5d34f8ea-2c75-4c36-8e3b-a424e766f4e3">
+		<http:request-connection protocol="HTTPS"/>
+	</http:request-config>
+</mule>

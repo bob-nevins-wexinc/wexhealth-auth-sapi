@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="postAuthorize" doc:id="1718461a-f3a6-44ec-9e58-1ccd242d939a" >
+		<logger level="INFO" doc:name="Start of Flow" doc:id="a887f8a5-e25f-4223-94af-bcb64bdbdac5" message="--- Start of #[flow.name] flow ---"/>
+		<ee:transform doc:name="Build Request" doc:id="1fbcda9a-1c62-4f01-b88c-322f71e22018" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output multipart/form-data
+import dw::module::Multipart
+---
+{
+	parts: {
+		(UserName: Multipart::field("UserName", payload.UserName)) if !isEmpty(payload.UserName),
+		(Password: Multipart::field("Password", payload.Password)) if !isEmpty(payload.Password),
+		(Id: Multipart::field("Id", payload.Id)) if !isEmpty(payload.Id),
+		(NormalizedUserName: Multipart::field("NormalizedUserName", payload.NormalizedUserName)) if !isEmpty(payload.NormalizedUserName),
+		(Email: Multipart::field("Email", payload.Email)) if !isEmpty(payload.Email),
+		(NormalizedEmail: Multipart::field("NormalizedEmail", payload.NormalizedEmail)) if !isEmpty(payload.NormalizedEmail),
+		(EmailConfirmed: Multipart::field("EmailConfirmed", payload.EmailConfirmed as String)) if !isEmpty(payload.EmailConfirmed),
+		(PasswordHash: Multipart::field("PasswordHash", payload.PasswordHash)) if !isEmpty(payload.PasswordHash),
+		(SecurityStamp: Multipart::field("SecurityStamp", payload.SecurityStamp)) if !isEmpty(payload.SecurityStamp),
+		(ConcurrencyStamp: Multipart::field("ConcurrencyStamp", payload.ConcurrencyStamp)) if !isEmpty(payload.ConcurrencyStamp),
+		(PhoneNumber: Multipart::field("PhoneNumber", payload.PhoneNumber)) if !isEmpty(payload.PhoneNumber),
+		(PhoneNumberConfirmed: Multipart::field("PhoneNumberConfirmed", payload.PhoneNumberConfirmed as String)) if !isEmpty(payload.PhoneNumberConfirmed),
+		(TwoFactorEnabled: Multipart::field("TwoFactorEnabled", payload.TwoFactorEnabled as String)) if !isEmpty(payload.TwoFactorEnabled),
+		(LockoutEnd: Multipart::field("LockoutEnd", payload.LockoutEnd)) if !isEmpty(payload.LockoutEnd),
+		(LockoutEnabled: Multipart::field("LockoutEnabled", payload.LockoutEnabled as String)) if !isEmpty(payload.LockoutEnabled),
+		(AccessFailedCount: Multipart::field("AccessFailedCount", payload.AccessFailedCount)) if !isEmpty(payload.AccessFailedCount),
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<!-- [STUDIO:"Get Authorization Token"]<http:request method="POST" doc:name="Get Authorization Token" doc:id="29ce82b5-3b58-468d-ab14-394b0e024264" config-ref="HTTP_Request_configuration" url="${wexapi.url}" /> [STUDIO] -->
+		<set-payload value="TokenString" doc:name="MOCK Response" doc:id="0b5b64db-8c6d-4cc1-b498-c3ddeebc121e" />
+		<ee:transform doc:name="Format response" doc:id="55abdec0-3bea-48cc-8945-a9706b65f871" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"success": true,
+	"header": {
+		"apiName": Mule::p('secure::api.name'),
+		"version": Mule::p('secure::api.version'),
+		"correlationId": vars.correlationId,
+		"timestamp": vars.currentTime
+	},
+	"results": {
+		accessToken: payload as String
+	},
+	"error": null
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="End of Flow" doc:id="193c494c-d28f-4e00-8be4-68b1e1dda85f" message="--- End of #[flow.name] flow ---"/>
+	</flow>
+</mule>

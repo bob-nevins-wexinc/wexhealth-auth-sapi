@@ -1,0 +1,12 @@
+{
+  "minMuleVersion": "4.6.0",
+	"secureProperties": [			
+		"mule.key",
+	    "anypoint.platform.client_secret",
+	    "secure::https.listener.keystore.password",
+	   	"secure::https.listener.keystore.key.password",
+	    "secure::db.password",
+	    "secure::salesforce.consumerSecret",
+	    "secure::salesforce.password"
+	]	
+}

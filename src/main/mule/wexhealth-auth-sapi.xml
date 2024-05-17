@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:module-error-handler-plugin="http://www.mulesoft.org/schema/mule/module-error-handler-plugin" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+http://www.mulesoft.org/schema/mule/module-error-handler-plugin http://www.mulesoft.org/schema/mule/module-error-handler-plugin/current/mule-module-error-handler-plugin.xsd">
+    <apikit:config name="wexhealth-auth-sapi-config" api="resource::646a34d5-f9e4-44f1-8a06-19c24584536c:wexhealth-auth-sapi:1.0.0:raml:zip:wexhealth-auth-sapi.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <flow name="wexhealth-auth-sapi-main">
+        <http:listener path="/${api.path}/*" config-ref="wexhealth-auth-sapi-httpListenerConfig">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+		<set-variable value="#[correlationId]" doc:name="correlationId" doc:id="fc4192ba-d0f0-4158-9ad6-1269c674975a" variableName="correlationId" />
+		<set-variable value="#[now()]" doc:name="currentTime" doc:id="2b14a0cf-ff5d-46fe-b3cf-bbc5a39ad032" variableName="currentTime" />
+        <apikit:router config-ref="wexhealth-auth-sapi-config" />
+		<error-handler>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="8e60a108-92c3-4d97-a78e-916df18ad677" >
+				<flow-ref doc:name="api-error-handler" doc:id="b7327329-d9c6-48ea-8f63-136eb0794602" name="api-error-handler"/>
+			</on-error-continue>
+        </error-handler>
+    </flow>
+	<sub-flow name="api-error-handler" doc:id="dd6c279c-15bf-4935-86f2-30106c383000" doc:description="This flow can be re-used across different flows to create an error payload and log an exception">
+		<logger level="INFO" doc:name="Start of Flow" doc:id="31ead7e4-7db9-4303-9a71-aa7f31650978" message="--- Start of #[flow.name] flow ---"/>
+		<module-error-handler-plugin:on-error doc:name="Create Error Payload + Log to Salesforce" doc:id="2c277e35-f4ac-401e-ad58-229abf84eeba" config-ref="Error_Handler_Plugin_Config" keyRecordId="#[if ((payload is Object or payload is Array) and (payload.data.id != null)) payload.data.id else '']">
+					<module-error-handler-plugin:custom-errors><![CDATA[#[${file::dwl/custom-errors.dwl}]]]></module-error-handler-plugin:custom-errors>
+				</module-error-handler-plugin:on-error>
+		<set-variable value="#[attributes.httpStatus]" doc:name="httpStatus" doc:id="aa008a50-4cfc-4de8-9c24-2881f8330dd4" variableName="httpStatus" />
+		<logger level="INFO" doc:name="End of Flow" doc:id="506ed7e4-1fb8-4078-a8c9-b4232f2ea49d" message="--- End of #[flow.name] flow ---"/>
+	</sub-flow>
+    <flow name="post:\authorize:application\json:wexhealth-auth-sapi-config">
+		<flow-ref doc:name="postAuthorize" doc:id="ea4a7d2d-0203-4cf0-82fa-66d9bec3970a" name="postAuthorize"/>
+    </flow>
+</mule>

@@ -1,0 +1,29 @@
+api:
+  autodiscovery.id: "19511872"
+  name: "dev-wexhealth-auth-sapi"
+  version: "v1.0"
+  path: "api/${api.version}"
+  
+https:
+  port: "8097" #"8081"
+  listener:
+    host: "0.0.0.0"
+    private.port: "8092"
+    keystore:
+      file: "ssl/identity.p12"
+      alias: "selfsigned"
+      password: "![3IO1GixGxf2TW6PARshn9Q==]"
+      key.password: "![3IO1GixGxf2TW6PARshn9Q==]"
+    trustore:
+      file: ""
+      alias: ""
+      password: ""
+      
+wexapi:
+  url: "https://stg-api-auth-samurai.wexglobal.com/api/Jwt"
+
+error.handler:
+  externalid:
+    ttl.interval: "30"
+    ttl.unit: "SECONDS"
+  

@@ -1,5 +1,5 @@
 api:
-  autodiscovery.id: "123456"
+  autodiscovery.id: "19515357"
   name: "qa-wexhealth-auth-sapi"
   version: "v1.0"
   path: "api/${api.version}"

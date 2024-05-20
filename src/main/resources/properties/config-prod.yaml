@@ -1,50 +1,27 @@
 api:
-  autodiscovery.id: "19047723"
-  name: "tmo-mule-realpage-system-api-prod"
+  autodiscovery.id: "19515357"
+  name: "wexhealth-auth-sapi"
   version: "v1.0"
   path: "api/${api.version}"
   
 https:
-  port: "8082"
+  port: "8097" #"8081"
   listener:
     host: "0.0.0.0"
     private.port: "8092"
     keystore:
       file: "ssl/identity.p12"
       alias: "selfsigned"
-      password: "![X6f6fCQvhOFpcdZaqMbD7g==]"
-      key.password: "![X6f6fCQvhOFpcdZaqMbD7g==]"
+      password: "![3IO1GixGxf2TW6PARshn9Q==]"
+      key.password: "![3IO1GixGxf2TW6PARshn9Q==]"
     trustore:
       file: ""
       alias: ""
       password: ""
+      
+wexapi:
+  url: "https://stg-api-auth-samurai.wexglobal.com/api/Jwt"
 
-realpage:
-  wsdl: "https://gateway.rpx.realpage.com/RPXGateway/partner/Michaels/Michaels.svc?wsdl"
-  service: "Michaels"
-  port: "BasicHttpBinding_IRPXService"
-  address: "https://gateway.rpx.realpage.com/RPXGateway/partner/Michaels/Michaels.svc"
-  timeout:
-    response: "60000"
-  retry:
-    attempt: "2"
-    frequency: "2000"
-  operationretry:
-    attempts: "3"
-    delay: "5000"
-  pmcid: "![PpvTpstzxa8UWebtFg9vdg==]"
-  licensekey: "![rfoGjcP9RLWcmrAvti4rJKmDlqa76okWpebw4G5Xjt6MpJyYQvdpDPhr4x21UHBg]"
-  webservice:
-    url: "https://api.realpage.com/accounting/gl/gldetails"
-    username: "TMO-RafterOne-WS-RES"
-    password: "![v8jwwZjP1HobZ0DhoEgwAQ==]"
-    apikey: "![jOgdnpEVdsYUF85o5H7xnglqyF0gZVEM9SH9zQ8YeJs6dKIObUGamtu3e4FYYhQ9]"
-    
-json.logger:
-  dissabled.fields: ""
-  masked.fields: "email"
-  debug.on: "true"
-  
 error.handler:
   externalid:
     ttl.interval: "30"

@@ -1,6 +1,6 @@
 api:
-  autodiscovery.id: "19511872"
-  name: "dev-wexhealth-auth-sapi"
+  autodiscovery.id: "123456"
+  name: "stage-wexhealth-auth-sapi"
   version: "v1.0"
   path: "api/${api.version}"
   

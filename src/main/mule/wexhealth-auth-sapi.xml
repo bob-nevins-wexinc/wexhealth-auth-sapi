@@ -24,9 +24,10 @@ http://www.mulesoft.org/schema/mule/module-error-handler-plugin http://www.mules
     </flow>
 	<sub-flow name="api-error-handler" doc:id="dd6c279c-15bf-4935-86f2-30106c383000" doc:description="This flow can be re-used across different flows to create an error payload and log an exception">
 		<logger level="INFO" doc:name="Start of Flow" doc:id="31ead7e4-7db9-4303-9a71-aa7f31650978" message="--- Start of #[flow.name] flow ---"/>
-		<module-error-handler-plugin:on-error doc:name="Create Error Payload + Log to Salesforce" doc:id="2c277e35-f4ac-401e-ad58-229abf84eeba" config-ref="Error_Handler_Plugin_Config" keyRecordId="#[if ((payload is Object or payload is Array) and (payload.data.id != null)) payload.data.id else '']">
+		<module-error-handler-plugin:on-error doc:name="Create Error Payload" doc:id="2c277e35-f4ac-401e-ad58-229abf84eeba" config-ref="Error_Handler_Plugin_Config" keyRecordId="#[if ((payload is Object or payload is Array) and (payload.data.id != null)) payload.data.id else '']">
 					<module-error-handler-plugin:custom-errors><![CDATA[#[${file::dwl/custom-errors.dwl}]]]></module-error-handler-plugin:custom-errors>
 				</module-error-handler-plugin:on-error>
+		<logger level="INFO" doc:name="Error Payload" doc:id="38d42c97-6182-454d-ae99-a48293c8de84" message="#[payload]"/>
 		<set-variable value="#[attributes.httpStatus]" doc:name="httpStatus" doc:id="aa008a50-4cfc-4de8-9c24-2881f8330dd4" variableName="httpStatus" />
 		<logger level="INFO" doc:name="End of Flow" doc:id="506ed7e4-1fb8-4078-a8c9-b4232f2ea49d" message="--- End of #[flow.name] flow ---"/>
 	</sub-flow>
